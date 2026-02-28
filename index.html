@@ -161,12 +161,12 @@
                                     <h3 class="text-slate-800 font-bold text-xs uppercase tracking-wider">TOD Receiving (1)</h3>
                                     <span class="text-[10px] font-semibold text-slate-400">Langkah 1 dari 5</span>
                                 </div>
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">Receiving</label><div class="flex gap-2"><input type="number" id="rec_1_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md"><input type="number" id="rec_1_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
-                                    <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">Update Binning</label><div class="flex gap-2"><input type="number" id="rec_2_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md"><input type="number" id="rec_2_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
-                                    <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">Stock Opname</label><div class="flex gap-2"><input type="number" id="rec_3_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md"><input type="number" id="rec_3_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
-                                    <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">Durasi Proses</label><div class="flex gap-2"><input type="number" id="rec_4_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md"><input type="number" id="rec_4_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
-                                    <div class="space-y-1.5 col-span-2"><label class="text-[10px] text-slate-500 font-semibold uppercase">STO GR Site Pengirim</label><div class="flex gap-2"><input type="number" id="rec_5_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md"><input type="number" id="rec_5_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
+                                <div class="grid grid-cols-1 gap-4">
+                                    <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">Receiving</label><div class="flex flex-col gap-2"><input type="number" id="rec_1_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md"><input type="number" id="rec_1_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
+                                    <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">Update Binning</label><div class="flex flex-col gap-2"><input type="number" id="rec_2_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md"><input type="number" id="rec_2_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
+                                    <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">Stock Opname</label><div class="flex flex-col gap-2"><input type="number" id="rec_3_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md"><input type="number" id="rec_3_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
+                                    <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">Durasi Proses</label><div class="flex flex-col gap-2"><input type="number" id="rec_4_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md"><input type="number" id="rec_4_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
+                                    <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">STO GR Site Pengirim</label><div class="flex flex-col gap-2"><input type="number" id="rec_5_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md"><input type="number" id="rec_5_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
                                 </div>
                                 <div class="mt-6 flex justify-end border-t border-slate-100 pt-4">
                                     <button type="button" id="btnNext1" onclick="setTodStep(2)" disabled class="bg-blue-50 text-blue-600 px-4 py-2 rounded-lg text-xs font-bold hover:bg-blue-100 transition flex items-center gap-2 btn-locked">Selanjutnya: TOD Issuing <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg></button>
@@ -179,13 +179,13 @@
                                     <h3 class="text-slate-800 font-bold text-xs uppercase tracking-wider">TOD (Issuing) 2</h3>
                                     <span class="text-[10px] font-semibold text-slate-400">Langkah 2 dari 5</span>
                                 </div>
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">Issuing</label><div class="flex gap-2"><input type="number" id="iss_1_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md"><input type="number" id="iss_1_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
-                                    <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">GR Part Damage</label><div class="flex gap-2"><input type="number" id="iss_2_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md"><input type="number" id="iss_2_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
-                                    <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">Stock Opname hari ini</label><div class="flex gap-2"><input type="number" id="iss_3_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md"><input type="number" id="iss_3_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
-                                    <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">GI Part Damage</label><div class="flex gap-2"><input type="number" id="iss_4_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md"><input type="number" id="iss_4_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
-                                    <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">STO yang sudah GI hari ini</label><div class="flex gap-2"><input type="number" id="iss_5_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md"><input type="number" id="iss_5_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
-                                    <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">GR Site Penerima hari ini</label><div class="flex gap-2"><input type="number" id="iss_6_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md"><input type="number" id="iss_6_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
+                                <div class="grid grid-cols-1 gap-4">
+                                    <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">Issuing</label><div class="flex flex-col gap-2"><input type="number" id="iss_1_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md"><input type="number" id="iss_1_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
+                                    <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">GR Part Damage</label><div class="flex flex-col gap-2"><input type="number" id="iss_2_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md"><input type="number" id="iss_2_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
+                                    <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">Stock Opname hari ini</label><div class="flex flex-col gap-2"><input type="number" id="iss_3_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md"><input type="number" id="iss_3_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
+                                    <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">GI Part Damage</label><div class="flex flex-col gap-2"><input type="number" id="iss_4_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md"><input type="number" id="iss_4_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
+                                    <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">STO yang sudah GI hari ini</label><div class="flex flex-col gap-2"><input type="number" id="iss_5_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md"><input type="number" id="iss_5_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
+                                    <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">GR Site Penerima hari ini</label><div class="flex flex-col gap-2"><input type="number" id="iss_6_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md"><input type="number" id="iss_6_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
                                 </div>
                                 <div class="mt-6 flex justify-between border-t border-slate-100 pt-4">
                                     <button type="button" onclick="setTodStep(1)" class="bg-slate-50 text-slate-500 px-4 py-2 rounded-lg text-xs font-bold hover:bg-slate-100 transition">Kembali</button>
@@ -199,13 +199,13 @@
                                     <h3 class="text-slate-800 font-bold text-xs uppercase tracking-wider">TOD Inventory (3)</h3>
                                     <span class="text-[10px] font-semibold text-slate-400">Langkah 3 dari 5</span>
                                 </div>
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">Stock Opname</label><div class="flex gap-2"><input type="number" id="inv_1_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md"><input type="number" id="inv_1_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
-                                    <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">Under Stock</label><div class="flex gap-2"><input type="number" id="inv_2_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md"><input type="number" id="inv_2_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
-                                    <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">Over Stock</label><div class="flex gap-2"><input type="number" id="inv_3_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md"><input type="number" id="inv_3_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
-                                    <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">Kalibrasi Min-Max</label><div class="flex gap-2"><input type="number" id="inv_4_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md"><input type="number" id="inv_4_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
-                                    <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">Update SAP</label><div class="flex gap-2"><input type="number" id="inv_5_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md"><input type="number" id="inv_5_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
-                                    <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">Audit Binning</label><div class="flex gap-2"><input type="number" id="inv_6_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md"><input type="number" id="inv_6_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
+                                <div class="grid grid-cols-1 gap-4">
+                                    <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">Stock Opname</label><div class="flex flex-col gap-2"><input type="number" id="inv_1_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md"><input type="number" id="inv_1_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
+                                    <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">Under Stock</label><div class="flex flex-col gap-2"><input type="number" id="inv_2_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md"><input type="number" id="inv_2_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
+                                    <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">Over Stock</label><div class="flex flex-col gap-2"><input type="number" id="inv_3_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md"><input type="number" id="inv_3_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
+                                    <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">Kalibrasi Min-Max</label><div class="flex flex-col gap-2"><input type="number" id="inv_4_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md"><input type="number" id="inv_4_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
+                                    <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">Update SAP</label><div class="flex flex-col gap-2"><input type="number" id="inv_5_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md"><input type="number" id="inv_5_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
+                                    <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">Audit Binning</label><div class="flex flex-col gap-2"><input type="number" id="inv_6_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md"><input type="number" id="inv_6_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
                                 </div>
                                 <div class="mt-6 flex justify-between border-t border-slate-100 pt-4">
                                     <button type="button" onclick="setTodStep(2)" class="bg-slate-50 text-slate-500 px-4 py-2 rounded-lg text-xs font-bold hover:bg-slate-100 transition">Kembali</button>
@@ -219,11 +219,11 @@
                                     <h3 class="text-slate-800 font-bold text-xs uppercase tracking-wider">TOD WMS (4)</h3>
                                     <span class="text-[10px] font-semibold text-slate-400">Langkah 4 dari 5</span>
                                 </div>
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">Inbound Del.</label><div class="flex gap-2"><input type="number" id="wms_1_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md"><input type="number" id="wms_1_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
-                                    <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">GR Form Inb.</label><div class="flex gap-2"><input type="number" id="wms_2_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md"><input type="number" id="wms_2_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
-                                    <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">Confirm TO GR</label><div class="flex gap-2"><input type="number" id="wms_3_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md"><input type="number" id="wms_3_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
-                                    <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">Plan Binning</label><div class="flex gap-2"><input type="number" id="wms_4_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md"><input type="number" id="wms_4_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
+                                <div class="grid grid-cols-1 gap-4">
+                                    <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">Inbound Del.</label><div class="flex flex-col gap-2"><input type="number" id="wms_1_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md"><input type="number" id="wms_1_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
+                                    <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">GR Form Inb.</label><div class="flex flex-col gap-2"><input type="number" id="wms_2_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md"><input type="number" id="wms_2_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
+                                    <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">Confirm TO GR</label><div class="flex flex-col gap-2"><input type="number" id="wms_3_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md"><input type="number" id="wms_3_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
+                                    <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">Plan Binning</label><div class="flex flex-col gap-2"><input type="number" id="wms_4_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md"><input type="number" id="wms_4_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
                                 </div>
                                 <div class="mt-6 flex justify-between border-t border-slate-100 pt-4">
                                     <button type="button" onclick="setTodStep(3)" class="bg-slate-50 text-slate-500 px-4 py-2 rounded-lg text-xs font-bold hover:bg-slate-100 transition">Kembali</button>
@@ -386,6 +386,27 @@
             document.getElementById('inputDate').value = new Date().toISOString().split('T')[0];
             updateDashboard();
             validateFormFlow(); // Initial lock check
+
+            // Navigasi Enter Key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') {
+                        e.preventDefault();
+                        const formArea = document.querySelector('.p-8.space-y-8');
+                        if (formArea) {
+                            const focusables = Array.from(formArea.querySelectorAll('input:not([disabled]), select:not([disabled]), button:not([disabled])')).filter(el => {
+                                const todStep = el.closest('.tod-step');
+                                return !todStep || !todStep.classList.contains('hidden');
+                            });
+                            
+                            const index = focusables.indexOf(e.target);
+                            if (index > -1 && index < focusables.length - 1) {
+                                focusables[index + 1].focus();
+                            }
+                        }
+                    }
+                }
+            });
         });
 
         function syncDashboardFilter() {
@@ -548,7 +569,16 @@
                 document.getElementById('monthlyFinalScore').innerText = "0.0";
                 document.getElementById('entryCount').innerText = "0 ENTRIES";
                 document.getElementById('gradeBadge').innerText = "Menunggu Data";
-                renderBars([{label:'Receiving',val:0,color:'bg-blue-500',weight:'17.5%'},{label:'Issuing',val:0,color:'bg-emerald-500',weight:'17.5%'},{label:'Inventory',val:0,color:'bg-amber-500',weight:'17.5%'},{label:'WMS',val:0,color:'bg-purple-500',weight:'17.5%'}]);
+                renderBars([
+                    {label:'Receiving',val:0,color:'bg-blue-500',weight:'17.5%'},
+                    {label:'Issuing',val:0,color:'bg-emerald-500',weight:'17.5%'},
+                    {label:'Inventory',val:0,color:'bg-amber-500',weight:'17.5%'},
+                    {label:'WMS',val:0,color:'bg-purple-500',weight:'17.5%'},
+                    {label:'Kehadiran',val:0,color:'bg-cyan-500',weight:'5%'},
+                    {label:'Kedisiplinan',val:0,color:'bg-indigo-500',weight:'15%'},
+                    {label:'Safety Individu',val:0,color:'bg-rose-500',weight:'5%'},
+                    {label:'Suggestion System',val:0,color:'bg-teal-500',weight:'5%'}
+                ]);
                 renderLog([]);
                 return;
             }
@@ -573,7 +603,16 @@
             document.getElementById('monthlyFinalScore').innerText = final.toFixed(1);
             const badge = document.getElementById('gradeBadge');
             badge.innerText = final >= 90 ? 'Grade: Excellent' : final >= 75 ? 'Grade: Good' : 'Grade: Needs Imprv';
-            renderBars([{label:'Receiving',val:avgRec,color:'bg-blue-500',weight:'17.5%'},{label:'Issuing',val:avgIss,color:'bg-emerald-500',weight:'17.5%'},{label:'Inventory',val:avgInv,color:'bg-amber-500',weight:'17.5%'},{label:'WMS',val:avgWms,color:'bg-purple-500',weight:'17.5%'}]);
+            renderBars([
+                {label:'Receiving',val:avgRec,color:'bg-blue-500',weight:'17.5%'},
+                {label:'Issuing',val:avgIss,color:'bg-emerald-500',weight:'17.5%'},
+                {label:'Inventory',val:avgInv,color:'bg-amber-500',weight:'17.5%'},
+                {label:'WMS',val:avgWms,color:'bg-purple-500',weight:'17.5%'},
+                {label:'Kehadiran',val:attScore,color:'bg-cyan-500',weight:'5%'},
+                {label:'Kedisiplinan',val:avgDisc,color:'bg-indigo-500',weight:'15%'},
+                {label:'Safety Individu',val:safetyS,color:'bg-rose-500',weight:'5%'},
+                {label:'Suggestion System',val:ssS,color:'bg-teal-500',weight:'5%'}
+            ]);
             renderLog(kpiDataStore.filter(e=>filter==='ALL' || e.userId===filter));
             validateWizardSteps();
         }
