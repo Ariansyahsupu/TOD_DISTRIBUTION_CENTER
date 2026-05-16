@@ -32,10 +32,13 @@
             box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
             outline: none;
         }
+        
         .input-premium:disabled {
-            opacity: 0.5;
+            opacity: 1;
             cursor: not-allowed;
             background-color: #F1F5F9;
+            color: #1e293b; 
+            font-weight: 800;
         }
 
         .btn-locked {
@@ -71,316 +74,383 @@
             z-index: 10;
             border-right: 1px solid #E2E8F0;
         }
+
+        #loginOverlay {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #F3F4F6 0%, #E5E7EB 100%);
+        }
+
+        #errorPopup {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10000;
+            background-color: #FEF2F2;
+            border: 1px solid #FEE2E2;
+            padding: 12px 24px;
+            border-radius: 12px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            color: #991B1B;
+            font-weight: 600;
+            font-size: 14px;
+            align-items: center;
+            gap: 10px;
+        }
     </style>
 </head>
 <body class="antialiased selection:bg-blue-100 selection:text-blue-900">
 
-    <!-- Navbar -->
-    <nav class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200 no-print">
-        <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-            <div class="flex items-center gap-3 cursor-pointer" onclick="toggleView('input')">
-                <div class="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center shadow-md shadow-blue-600/20">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                    </svg>
-                </div>
-                <div>
-                    <h1 class="text-sm font-extrabold tracking-tight text-slate-900">PERFORMANCE<span class="text-blue-600">HUB</span></h1>
-                    <p class="text-[10px] text-slate-500 font-medium tracking-wide">Warehouse Operations</p>
-                </div>
-            </div>
-            
-            <div class="flex items-center gap-4">
-                <button onclick="toggleView('dashboard')" class="bg-indigo-50 text-indigo-600 border border-indigo-100 hover:bg-indigo-600 hover:text-white px-4 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-2 shadow-sm">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                    </svg>
-                    Live Monitoring Dashboard
-                </button>
-                <button onclick="window.print()" class="bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 hover:text-blue-600 px-4 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-2 shadow-sm">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
-                    </svg>
-                    Print Report
-                </button>
-            </div>
-        </div>
-    </nav>
-
-    <!-- AREA INPUT -->
-    <div id="viewInputArea" class="block">
-        <main class="max-w-7xl mx-auto mt-8 px-6 grid grid-cols-1 lg:grid-cols-12 gap-8 mb-20">
-            <div class="lg:col-span-8 space-y-8 no-print">
-                <section class="bg-white rounded-2xl card-shadow border border-slate-200 overflow-hidden" oninput="validateFormFlow()">
-                    <div class="px-8 py-5 border-b border-slate-100 flex justify-between items-center bg-white">
-                        <h2 class="text-sm font-bold text-slate-800 flex items-center gap-2 uppercase tracking-wide">Pencatatan Harian</h2>
-                        <input type="date" id="inputDate" class="input-premium text-xs font-bold rounded-lg px-3 py-2 cursor-pointer">
-                    </div>
-
-                    <div class="p-8 space-y-8">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-5 bg-slate-50/50 rounded-xl border border-slate-100">
-                            <div class="space-y-2">
-                                <label class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Pilih Karyawan</label>
-                                <select id="userSelector" onchange="syncDashboardFilter(); validateFormFlow();" class="w-full input-premium p-2.5 rounded-lg text-sm font-semibold text-slate-800 cursor-pointer">
-                                    <option value="" selected disabled>-- Pilih Karyawan --</option>
-                                    <option value="1021095">Ari Faunda Widodo (1021095)</option>
-                                    <option value="1013522">Fathikin (1013522)</option>
-                                    <option value="1015861">Slamet Riyadi (1015861)</option>
-                                    <option value="1022013">Ardi Sutantiyo (1022013)</option>
-                                    <option value="1015972">Maulana Itsnal (1015972)</option>
-                                    <option value="1011999">Muhammad Dzu'al Alim Mustaqim (1011999)</option>
-                                    <option value="1010870">Budi Sutrisno (1010870)</option>
-                                    <option value="M_RIYADI">Muhammad Riyadi</option>
-                                </select>
-                            </div>
-                            <div class="grid grid-cols-2 gap-4">
-                                <div class="space-y-2">
-                                    <label class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Kehadiran</label>
-                                    <select id="isHadir" disabled onchange="validateFormFlow()" class="w-full input-premium p-2.5 rounded-lg text-sm font-bold text-slate-800 cursor-pointer">
-                                        <option value="" selected disabled>-- Pilih --</option>
-                                        <option value="1">Hadir</option>
-                                        <option value="2">Cuti</option>
-                                        <option value="0">Absen</option>
-                                    </select>
-                                </div>
-                                <div class="space-y-2">
-                                    <label class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Kedisiplinan</label>
-                                    <select id="dailyDisc" disabled onchange="validateFormFlow()" class="w-full input-premium p-2.5 rounded-lg text-sm font-bold text-slate-800 cursor-pointer">
-                                        <option value="" selected disabled>-- Pilih --</option>
-                                        <option value="NORMAL">Normal</option>
-                                        <option value="PC">Ada PC</option>
-                                        <option value="SP">Ada SP</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Wizard Steps Container -->
-                        <div id="wizardContainer" class="hidden space-y-0 relative">
-                            <!-- TOD 1 -->
-                            <div id="todStep1" class="tod-step block relative p-6 rounded-xl border border-slate-200 bg-white shadow-sm hover:shadow-md transition-shadow">
-                                <div class="absolute top-0 left-0 w-1 h-full bg-blue-500 rounded-l-xl"></div>
-                                <div class="mb-5 flex justify-between items-center">
-                                    <h3 class="text-slate-800 font-bold text-xs uppercase tracking-wider">TOD Receiving (1)</h3>
-                                    <span class="text-[10px] font-semibold text-slate-400">Langkah 1 dari 5</span>
-                                </div>
-                                <div class="grid grid-cols-1 gap-4">
-                                    <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">Receiving</label><div class="flex flex-col gap-2"><input type="number" id="rec_1_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md"><input type="number" id="rec_1_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
-                                    <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">Update Binning</label><div class="flex flex-col gap-2"><input type="number" id="rec_2_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md"><input type="number" id="rec_2_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
-                                    <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">Stock Opname</label><div class="flex flex-col gap-2"><input type="number" id="rec_3_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md"><input type="number" id="rec_3_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
-                                    <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">Durasi Proses</label><div class="flex flex-col gap-2"><input type="number" id="rec_4_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md"><input type="number" id="rec_4_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
-                                    <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">STO GR Site Pengirim</label><div class="flex flex-col gap-2"><input type="number" id="rec_5_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md"><input type="number" id="rec_5_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
-                                </div>
-                                <div class="mt-6 flex justify-end border-t border-slate-100 pt-4">
-                                    <button type="button" id="btnNext1" onclick="setTodStep(2)" disabled class="bg-blue-50 text-blue-600 px-4 py-2 rounded-lg text-xs font-bold hover:bg-blue-100 transition flex items-center gap-2 btn-locked">Selanjutnya: TOD Issuing <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg></button>
-                                </div>
-                            </div>
-                            <!-- TOD (Issuing) 2 -->
-                            <div id="todStep2" class="tod-step hidden relative p-6 rounded-xl border border-slate-200 bg-white shadow-sm">
-                                <div class="absolute top-0 left-0 w-1 h-full bg-emerald-500 rounded-l-xl"></div>
-                                <div class="mb-5 flex justify-between items-center">
-                                    <h3 class="text-slate-800 font-bold text-xs uppercase tracking-wider">TOD (Issuing) 2</h3>
-                                    <span class="text-[10px] font-semibold text-slate-400">Langkah 2 dari 5</span>
-                                </div>
-                                <div class="grid grid-cols-1 gap-4">
-                                    <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">Issuing</label><div class="flex flex-col gap-2"><input type="number" id="iss_1_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md"><input type="number" id="iss_1_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
-                                    <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">GR Part Damage</label><div class="flex flex-col gap-2"><input type="number" id="iss_2_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md"><input type="number" id="iss_2_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
-                                    <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">Stock Opname hari ini</label><div class="flex flex-col gap-2"><input type="number" id="iss_3_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md"><input type="number" id="iss_3_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
-                                    <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">GI Part Damage</label><div class="flex flex-col gap-2"><input type="number" id="iss_4_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md"><input type="number" id="iss_4_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
-                                    <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">STO yang sudah GI hari ini</label><div class="flex flex-col gap-2"><input type="number" id="iss_5_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md"><input type="number" id="iss_5_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
-                                    <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">GR Site Penerima hari ini</label><div class="flex flex-col gap-2"><input type="number" id="iss_6_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md"><input type="number" id="iss_6_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
-                                </div>
-                                <div class="mt-6 flex justify-between border-t border-slate-100 pt-4">
-                                    <button type="button" onclick="setTodStep(1)" class="bg-slate-50 text-slate-500 px-4 py-2 rounded-lg text-xs font-bold hover:bg-slate-100 transition">Kembali</button>
-                                    <button type="button" id="btnNext2" onclick="setTodStep(3)" disabled class="bg-emerald-50 text-emerald-600 px-4 py-2 rounded-lg text-xs font-bold hover:bg-emerald-100 transition flex items-center gap-2 btn-locked">Selanjutnya: TOD Inventory</button>
-                                </div>
-                            </div>
-                            <!-- TOD 3 -->
-                            <div id="todStep3" class="tod-step hidden relative p-6 rounded-xl border border-slate-200 bg-white shadow-sm">
-                                <div class="absolute top-0 left-0 w-1 h-full bg-amber-500 rounded-l-xl"></div>
-                                <div class="mb-5 flex justify-between items-center">
-                                    <h3 class="text-slate-800 font-bold text-xs uppercase tracking-wider">TOD Inventory (3)</h3>
-                                    <span class="text-[10px] font-semibold text-slate-400">Langkah 3 dari 5</span>
-                                </div>
-                                <div class="grid grid-cols-1 gap-4">
-                                    <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">Stock Opname</label><div class="flex flex-col gap-2"><input type="number" id="inv_1_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md"><input type="number" id="inv_1_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
-                                    <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">Under Stock</label><div class="flex flex-col gap-2"><input type="number" id="inv_2_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md"><input type="number" id="inv_2_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
-                                    <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">Over Stock</label><div class="flex flex-col gap-2"><input type="number" id="inv_3_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md"><input type="number" id="inv_3_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
-                                    <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">Kalibrasi Min-Max</label><div class="flex flex-col gap-2"><input type="number" id="inv_4_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md"><input type="number" id="inv_4_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
-                                    <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">Update SAP</label><div class="flex flex-col gap-2"><input type="number" id="inv_5_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md"><input type="number" id="inv_5_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
-                                    <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">Audit Binning</label><div class="flex flex-col gap-2"><input type="number" id="inv_6_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md"><input type="number" id="inv_6_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
-                                </div>
-                                <div class="mt-6 flex justify-between border-t border-slate-100 pt-4">
-                                    <button type="button" onclick="setTodStep(2)" class="bg-slate-50 text-slate-500 px-4 py-2 rounded-lg text-xs font-bold hover:bg-slate-100 transition">Kembali</button>
-                                    <button type="button" id="btnNext3" onclick="setTodStep(4)" disabled class="bg-amber-50 text-amber-600 px-4 py-2 rounded-lg text-xs font-bold hover:bg-amber-100 transition flex items-center gap-2 btn-locked">Selanjutnya: TOD WMS</button>
-                                </div>
-                            </div>
-                            <!-- TOD 4 -->
-                            <div id="todStep4" class="tod-step hidden relative p-6 rounded-xl border border-slate-200 bg-white shadow-sm">
-                                <div class="absolute top-0 left-0 w-1 h-full bg-purple-500 rounded-l-xl"></div>
-                                <div class="mb-5 flex justify-between items-center">
-                                    <h3 class="text-slate-800 font-bold text-xs uppercase tracking-wider">TOD WMS (4)</h3>
-                                    <span class="text-[10px] font-semibold text-slate-400">Langkah 4 dari 5</span>
-                                </div>
-                                <div class="grid grid-cols-1 gap-4">
-                                    <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">Inbound Del.</label><div class="flex flex-col gap-2"><input type="number" id="wms_1_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md"><input type="number" id="wms_1_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
-                                    <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">GR Form Inb.</label><div class="flex flex-col gap-2"><input type="number" id="wms_2_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md"><input type="number" id="wms_2_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
-                                    <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">Confirm TO GR</label><div class="flex flex-col gap-2"><input type="number" id="wms_3_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md"><input type="number" id="wms_3_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
-                                    <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">Plan Binning</label><div class="flex flex-col gap-2"><input type="number" id="wms_4_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md"><input type="number" id="wms_4_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
-                                </div>
-                                <div class="mt-6 flex justify-between border-t border-slate-100 pt-4">
-                                    <button type="button" onclick="setTodStep(3)" class="bg-slate-50 text-slate-500 px-4 py-2 rounded-lg text-xs font-bold hover:bg-slate-100 transition">Kembali</button>
-                                    <button type="button" id="btnNext4" onclick="setTodStep(5)" disabled class="bg-purple-50 text-purple-600 px-4 py-2 rounded-lg text-xs font-bold hover:bg-purple-100 transition flex items-center gap-2 btn-locked">Selesai (Isi Behavior)</button>
-                                </div>
-                            </div>
-                            <!-- TOD 5 -->
-                            <div id="todStep5" class="tod-step hidden relative p-6 rounded-xl border border-slate-200 bg-white shadow-sm">
-                                <div class="absolute top-0 left-0 w-1 h-full bg-slate-800 rounded-l-xl"></div>
-                                <div class="mb-5 flex justify-between items-center">
-                                    <h3 class="text-slate-800 font-bold text-xs uppercase tracking-wider">Perilaku & Safety</h3>
-                                    <span class="text-[10px] font-semibold text-slate-400">Langkah 5 dari 5</span>
-                                </div>
-                                <div class="grid grid-cols-2 gap-6 pt-2">
-                                    <div class="space-y-2">
-                                        <label class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Safety (Green Card)</label>
-                                        <input type="number" id="dailyGC" value="0" class="w-full input-premium p-3 rounded-lg text-sm font-bold text-slate-800">
-                                    </div>
-                                    <div class="space-y-2">
-                                        <label class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Improvement (SS)</label>
-                                        <input type="number" id="dailySS" value="0" class="w-full input-premium p-3 rounded-lg text-sm font-bold text-slate-800">
-                                    </div>
-                                </div>
-                                <div class="mt-8 flex justify-start border-t border-slate-100 pt-4">
-                                    <button type="button" onclick="setTodStep(4)" class="bg-slate-50 text-slate-500 px-4 py-2 rounded-lg text-xs font-bold hover:bg-slate-100 transition flex items-center gap-2">Kembali ke TOD WMS</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="pt-4">
-                            <button onclick="saveDailyEntry()" id="btnSubmitForm" disabled class="w-full bg-slate-900 text-white font-bold py-4 rounded-xl hover:bg-blue-600 active:scale-[0.99] transition shadow-md flex items-center justify-center gap-2 btn-locked">SUBMIT</button>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Activity Log -->
-                <section class="bg-white rounded-2xl card-shadow border border-slate-200 overflow-hidden">
-                    <div class="px-8 py-5 border-b border-slate-100 flex justify-between items-center">
-                        <h3 class="font-bold text-slate-800 text-sm uppercase tracking-wide">Log Aktivitas Tim</h3>
-                        <span id="entryCount" class="text-[10px] font-bold text-slate-500 bg-slate-100 px-3 py-1 rounded-md border border-slate-200">0 ENTRIES</span>
-                    </div>
-                    <div class="overflow-x-auto custom-scrollbar max-h-[400px]">
-                        <table class="w-full text-left border-collapse">
-                            <thead class="bg-slate-50 text-[10px] font-bold text-slate-500 uppercase tracking-wider sticky top-0 border-b border-slate-200">
-                                <tr>
-                                    <th class="px-8 py-4">Karyawan</th>
-                                    <th class="px-4 py-4">Tanggal</th>
-                                    <th class="px-4 py-4 text-center">REC %</th>
-                                    <th class="px-4 py-4 text-center">ISS %</th>
-                                    <th class="px-4 py-4 text-center">Status</th>
-                                    <th class="px-8 py-4 text-right">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody id="historyBody" class="text-sm font-medium divide-y divide-slate-100"></tbody>
-                        </table>
-                    </div>
-                </section>
-            </div>
-
-            <div class="lg:col-span-4 space-y-6">
-                <div class="sticky top-24 space-y-6">
-                    <div class="bg-slate-900 rounded-2xl p-8 text-white shadow-xl relative overflow-hidden border border-slate-800">
-                        <div class="relative z-10 space-y-6">
-                            <div class="space-y-1.5">
-                                <label class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Tampilan Data</label>
-                                <select id="dashboardFilter" onchange="updateDashboard()" class="w-full bg-slate-800 border border-slate-700 rounded-lg text-xs p-2.5 text-slate-200 font-semibold outline-none focus:border-blue-500">
-                                    <option value="ALL">Rata-Rata Seluruh Tim</option>
-                                    <option value="1021095">Ari Faunda Widodo</option>
-                                    <option value="1013522">Fathikin</option>
-                                    <option value="1015861">Slamet Riyadi</option>
-                                    <option value="1022013">Ardi Sutantiyo</option>
-                                    <option value="1015972">Maulana Itsnal</option>
-                                    <option value="1011999">Muhammad Dzu'al Alim Mustaqim</option>
-                                    <option value="1010870">Budi Sutrisno</option>
-                                    <option value="M_RIYADI">Muhammad Riyadi</option>
-                                </select>
-                            </div>
-                            <div class="pt-4 border-t border-slate-800">
-                                <p class="text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-2">Estimasi Nilai Akhir</p>
-                                <div class="flex items-baseline gap-1">
-                                    <span id="monthlyFinalScore" class="text-6xl font-extrabold tracking-tight">0.0</span>
-                                    <span class="text-xl font-bold text-slate-500">%</span>
-                                </div>
-                            </div>
-                            <div id="gradeBadge" class="inline-flex items-center gap-2 px-3 py-1.5 bg-slate-800 rounded-md text-[10px] font-bold text-slate-300 uppercase tracking-wide border border-slate-700">Menunggu Data</div>
-                        </div>
-                    </div>
-
-                    <div class="bg-white p-6 rounded-2xl card-shadow border border-slate-200">
-                        <h3 class="text-[11px] font-bold text-slate-800 uppercase mb-4 tracking-wide border-b border-slate-100 pb-3">Pengaturan Target</h3>
-                        <div class="grid grid-cols-2 gap-4">
-                            <div class="space-y-1.5">
-                                <label class="text-[10px] font-semibold text-slate-500 uppercase">Hari Kerja (HK)</label>
-                                <input type="number" id="monthlyHK" value="28" disabled class="w-full bg-slate-50 border border-slate-100 p-2.5 rounded-lg text-sm font-bold text-slate-400 cursor-not-allowed">
-                            </div>
-                            <div class="space-y-1.5">
-                                <label class="text-[10px] font-semibold text-slate-500 uppercase">Target Hadir</label>
-                                <div class="w-full bg-slate-50 border border-slate-100 p-2.5 rounded-lg text-sm font-bold text-slate-400">98%</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="bg-white p-6 rounded-2xl card-shadow border border-slate-200">
-                        <h3 class="text-[11px] font-bold text-slate-800 uppercase mb-6 tracking-wide border-b border-slate-100 pb-3">Komposisi Penilaian</h3>
-                        <div class="space-y-5" id="summaryBars"></div>
-                    </div>
-                </div>
-            </div>
-        </main>
+    <div id="errorPopup">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <span id="errorRemark">Password tidak sesuai dengan NIK yang dipilih.</span>
     </div>
 
-    <!-- AREA LIVE MONITORING DASHBOARD -->
-    <div id="viewDashboardArea" class="hidden">
-        <main class="max-w-7xl mx-auto mt-8 px-6 mb-20">
+    <div id="loginOverlay">
+        <div class="w-full max-w-md p-8">
             <div class="bg-white rounded-3xl card-shadow border border-slate-200 overflow-hidden">
-                <div class="bg-slate-900 px-8 py-8 text-white relative">
-                    <div class="relative z-10">
-                        <h2 class="text-3xl font-extrabold tracking-tight mb-2">Executive Performance Dashboard</h2>
-                        <div class="flex flex-wrap gap-4 items-end mt-8">
-                            <div class="space-y-2">
-                                <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Tipe Breakdown</label>
-                                <select id="dashPeriodType" onchange="loadDashboardData()" class="bg-slate-800 border border-slate-700 text-white text-sm rounded-lg px-4 py-2.5 outline-none">
-                                    <option value="BULAN">Per Bulan (Jan - Des)</option>
-                                    <option value="MINGGU">Per Minggu</option>
-                                    <option value="HARI">Per Hari</option>
-                                </select>
+                <div class="bg-slate-900 p-8 text-center text-white relative">
+                    <div class="w-12 h-12 bg-blue-600 rounded-xl mx-auto flex items-center justify-center shadow-lg shadow-blue-600/30 mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                        </svg>
+                    </div>
+                    <h2 class="text-xl font-extrabold uppercase tracking-tight">Access Control</h2>
+                    <p class="text-slate-400 text-xs font-medium tracking-wide mt-1">Warehouse Performance Hub</p>
+                </div>
+                <div class="p-8 space-y-6">
+                    <div class="space-y-2">
+                        <label class="text-[11px] font-bold text-slate-500 uppercase tracking-widest ml-1">Pilih User (NIK)</label>
+                        <select id="loginUser" class="w-full input-premium p-4 rounded-xl text-sm font-semibold text-slate-800 cursor-pointer">
+                            <option value="" disabled selected>-- Pilih NIK Anda --</option>
+                            <option value="1021095">1021095 - Ari Faunda Widodo</option>
+                            <option value="1013522">1013522 - Fathikin</option>
+                            <option value="1015861">1015861 - Slamet Riyadi</option>
+                            <option value="1022013">1022013 - Ardi Sutantiyo</option>
+                            <option value="1015972">1015972 - Maulana Itsnal</option>
+                            <option value="1011999">1011999 - Muhammad Dzu'al Alim Mustaqim</option>
+                            <option value="1010870">1010870 - Budi Sutrisno</option>
+                            <option value="M_RIYADI">M_RIYADI - Muhammad Riyadi</option>
+                            <option value="1015332">1015332 - Wardhani Saputra</option>
+                            <option value="1013843">1013843 - Andi Hidayat</option>
+                        </select>
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-[11px] font-bold text-slate-500 uppercase tracking-widest ml-1">Password</label>
+                        <input type="password" id="loginPass" placeholder="Masukkan NIK Anda" class="w-full input-premium p-4 rounded-xl text-sm font-bold text-slate-800">
+                    </div>
+                    <button onclick="attemptLogin()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-extrabold py-4 rounded-xl shadow-lg shadow-blue-600/20 transition-all duration-300 active:scale-95 flex items-center justify-center gap-3 mt-4">
+                        MASUK APLIKASI
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="mainApp" style="display: none;">
+        <nav class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200 no-print">
+            <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+                <div class="flex items-center gap-3 cursor-pointer" onclick="toggleView('input')">
+                    <div class="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center shadow-md shadow-blue-600/20">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-sm font-extrabold tracking-tight text-slate-900">PERFORMANCE<span class="text-blue-600">HUB</span></h1>
+                        <p class="text-[10px] text-slate-500 font-medium tracking-wide">Warehouse Operations</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-4">
+                    <button onclick="toggleView('dashboard')" class="bg-indigo-50 text-indigo-600 border border-indigo-100 hover:bg-indigo-600 hover:text-white px-4 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-2 shadow-sm">
+                        Live Monitoring Dashboard
+                    </button>
+                    <button onclick="window.print()" class="bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 hover:text-blue-600 px-4 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-2 shadow-sm">
+                        Print Report
+                    </button>
+                    <button onclick="logout()" class="ml-2 text-slate-400 hover:text-red-500 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        <div id="viewInputArea" class="block">
+            <main class="max-w-7xl mx-auto mt-8 px-6 grid grid-cols-1 lg:grid-cols-12 gap-8 mb-20">
+                <div class="lg:col-span-8 space-y-8 no-print">
+                    <section class="bg-white rounded-2xl card-shadow border border-slate-200 overflow-hidden" oninput="validateFormFlow()">
+                        <div class="px-8 py-5 border-b border-slate-100 flex justify-between items-center bg-white">
+                            <h2 class="text-sm font-bold text-slate-800 flex items-center gap-2 uppercase tracking-wide">Pencatatan Harian</h2>
+                            <input type="date" id="inputDate" class="input-premium text-xs font-bold rounded-lg px-3 py-2 cursor-pointer" onchange="fetchPlanTargets()">
+                        </div>
+
+                        <div class="p-8 space-y-8">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-5 bg-slate-50/50 rounded-xl border border-slate-100">
+                                <div class="space-y-2">
+                                    <label class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Karyawan</label>
+                                    <select id="userSelector" disabled class="w-full input-premium p-2.5 rounded-lg text-sm font-semibold text-slate-800 cursor-not-allowed">
+                                        <option value="" disabled selected>-- Pilih Karyawan --</option>
+                                        <option value="1021095">Ari Faunda Widodo</option>
+                                        <option value="1013522">Fathikin</option>
+                                        <option value="1015861">Slamet Riyadi</option>
+                                        <option value="1022013">Ardi Sutantiyo</option>
+                                        <option value="1015972">Maulana Itsnal</option>
+                                        <option value="1011999">Muhammad Dzu'al Alim Mustaqim</option>
+                                        <option value="1010870">Budi Sutrisno</option>
+                                        <option value="M_RIYADI">Muhammad Riyadi</option>
+                                        <option value="1015332">Wardhani Saputra</option>
+                                        <option value="1013843">Andi Hidayat</option>
+                                    </select>
+                                </div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div class="space-y-2">
+                                        <label class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Kehadiran</label>
+                                        <select id="isHadir" onchange="validateFormFlow(); updateDashboard();" class="w-full input-premium p-2.5 rounded-lg text-sm font-bold text-slate-800 cursor-pointer">
+                                            <option value="" selected disabled>-- Pilih --</option>
+                                            <option value="1">Hadir</option>
+                                            <option value="2">Cuti</option>
+                                            <option value="0">Absen</option>
+                                        </select>
+                                    </div>
+                                    <div class="space-y-2">
+                                        <label class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Kedisiplinan</label>
+                                        <select id="dailyDisc" disabled onchange="validateFormFlow(); updateDashboard();" class="w-full input-premium p-2.5 rounded-lg text-sm font-bold text-slate-800 cursor-pointer">
+                                            <option value="" selected disabled>-- Pilih --</option>
+                                            <option value="NORMAL">Normal</option>
+                                            <option value="PC">Ada PC</option>
+                                            <option value="SP">Ada SP</option>
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="space-y-2">
-                                <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Pilih Bulan</label>
-                                <select id="dashMonthSelect" onchange="loadDashboardData()" class="bg-slate-800 border border-slate-700 text-white text-sm rounded-lg px-4 py-2.5 outline-none">
-                                    <option value="ALL">Semua Bulan</option>
-                                    <option value="1">Januari</option><option value="2">Februari</option><option value="3">Maret</option>
-                                    <option value="4">April</option><option value="5">Mei</option><option value="6">Juni</option>
-                                    <option value="7">Juli</option><option value="8">Agustus</option><option value="9">September</option>
-                                    <option value="10">Oktober</option><option value="11">November</option><option value="12">Desember</option>
-                                </select>
+
+                            <div id="wizardContainer" class="hidden space-y-0 relative">
+                                <!-- Step 1 (Receiving) -->
+                                <div id="todStep1" class="tod-step block relative p-6 rounded-xl border border-slate-200 bg-white shadow-sm">
+                                    <div class="absolute top-0 left-0 w-1 h-full bg-blue-500 rounded-l-xl"></div>
+                                    <div class="mb-5 flex justify-between items-center">
+                                        <h3 class="text-slate-800 font-bold text-xs uppercase tracking-wider">TOD Receiving (1)</h3>
+                                        <span class="text-[10px] font-semibold text-slate-400">Langkah 1 dari 5</span>
+                                    </div>
+                                    <div class="grid grid-cols-1 gap-4">
+                                        <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">Receiving</label><div class="flex flex-col gap-2"><input type="number" id="rec_1_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md" disabled><input type="number" id="rec_1_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
+                                        <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">Update Binning</label><div class="flex flex-col gap-2"><input type="number" id="rec_2_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md" disabled><input type="number" id="rec_2_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
+                                        <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">Stock Opname</label><div class="flex flex-col gap-2"><input type="number" id="rec_3_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md" disabled><input type="number" id="rec_3_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
+                                        <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">Durasi Proses</label><div class="flex flex-col gap-2"><input type="number" id="rec_4_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md" disabled><input type="number" id="rec_4_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
+                                        <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">STO GR Site Pengirim</label><div class="flex flex-col gap-2"><input type="number" id="rec_5_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md" disabled><input type="number" id="rec_5_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
+                                    </div>
+                                    <div class="mt-6 flex justify-end border-t border-slate-100 pt-4">
+                                        <button type="button" id="btnNext1" onclick="setTodStep(2)" disabled class="bg-blue-50 text-blue-600 px-4 py-2 rounded-lg text-xs font-bold hover:bg-blue-100 transition flex items-center gap-2 btn-locked">Selanjutnya: TOD Issuing <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg></button>
+                                    </div>
+                                </div>
+                                <!-- Step 2 (Issuing) - 6 ITEMS -->
+                                <div id="todStep2" class="tod-step hidden relative p-6 rounded-xl border border-slate-200 bg-white shadow-sm">
+                                    <div class="absolute top-0 left-0 w-1 h-full bg-emerald-500 rounded-l-xl"></div>
+                                    <div class="mb-5 flex justify-between items-center">
+                                        <h3 class="text-slate-800 font-bold text-xs uppercase tracking-wider">TOD (Issuing) 2</h3>
+                                        <span class="text-[10px] font-semibold text-slate-400">Langkah 2 dari 5</span>
+                                    </div>
+                                    <div class="grid grid-cols-1 gap-4">
+                                        <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">Issuing</label><div class="flex flex-col gap-2"><input type="number" id="iss_1_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md" disabled><input type="number" id="iss_1_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
+                                        <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">GR Part Damage</label><div class="flex flex-col gap-2"><input type="number" id="iss_2_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md" disabled><input type="number" id="iss_2_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
+                                        <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">Stock Opname hari ini</label><div class="flex flex-col gap-2"><input type="number" id="iss_3_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md" disabled><input type="number" id="iss_3_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
+                                        <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">GI Part Damage</label><div class="flex flex-col gap-2"><input type="number" id="iss_4_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md" disabled><input type="number" id="iss_4_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
+                                        <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">STO GI</label><div class="flex flex-col gap-2"><input type="number" id="iss_5_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md" disabled><input type="number" id="iss_5_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
+                                        <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">GR Site Penerima</label><div class="flex flex-col gap-2"><input type="number" id="iss_6_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md" disabled><input type="number" id="iss_6_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
+                                    </div>
+                                    <div class="mt-6 flex justify-between border-t border-slate-100 pt-4">
+                                        <button type="button" onclick="setTodStep(1)" class="bg-slate-50 text-slate-500 px-4 py-2 rounded-lg text-xs font-bold hover:bg-slate-100 transition">Kembali</button>
+                                        <button type="button" id="btnNext2" onclick="setTodStep(3)" disabled class="bg-emerald-50 text-emerald-600 px-4 py-2 rounded-lg text-xs font-bold hover:bg-emerald-100 transition flex items-center gap-2 btn-locked">Selanjutnya: TOD Inventory</button>
+                                    </div>
+                                </div>
+                                <!-- Step 3 (Inventory) -->
+                                <div id="todStep3" class="tod-step hidden relative p-6 rounded-xl border border-slate-200 bg-white shadow-sm">
+                                    <div class="absolute top-0 left-0 w-1 h-full bg-amber-500 rounded-l-xl"></div>
+                                    <div class="mb-5 flex justify-between items-center">
+                                        <h3 class="text-slate-800 font-bold text-xs uppercase tracking-wider">TOD Inventory (3)</h3>
+                                        <span class="text-[10px] font-semibold text-slate-400">Langkah 3 dari 5</span>
+                                    </div>
+                                    <div class="grid grid-cols-1 gap-4">
+                                        <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">Stock Opname</label><div class="flex flex-col gap-2"><input type="number" id="inv_1_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md" disabled><input type="number" id="inv_1_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
+                                        <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">Under Stock</label><div class="flex flex-col gap-2"><input type="number" id="inv_2_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md" disabled><input type="number" id="inv_2_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
+                                        <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">Over Stock</label><div class="flex flex-col gap-2"><input type="number" id="inv_3_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md" disabled><input type="number" id="inv_3_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
+                                        <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">Kalibrasi Min-Max</label><div class="flex flex-col gap-2"><input type="number" id="inv_4_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md" disabled><input type="number" id="inv_4_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
+                                        <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">Update SAP</label><div class="flex flex-col gap-2"><input type="number" id="inv_5_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md" disabled><input type="number" id="inv_5_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
+                                        <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">Audit Binning</label><div class="flex flex-col gap-2"><input type="number" id="inv_6_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md" disabled><input type="number" id="inv_6_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
+                                    </div>
+                                    <div class="mt-6 flex justify-between border-t border-slate-100 pt-4">
+                                        <button type="button" onclick="setTodStep(2)" class="bg-slate-50 text-slate-500 px-4 py-2 rounded-lg text-xs font-bold hover:bg-slate-100 transition">Kembali</button>
+                                        <button type="button" id="btnNext3" onclick="setTodStep(4)" disabled class="bg-amber-50 text-amber-600 px-4 py-2 rounded-lg text-xs font-bold hover:bg-amber-100 transition flex items-center gap-2 btn-locked">Selanjutnya: TOD WMS</button>
+                                    </div>
+                                </div>
+                                <!-- Step 4 (WMS) -->
+                                <div id="todStep4" class="tod-step hidden relative p-6 rounded-xl border border-slate-200 bg-white shadow-sm">
+                                    <div class="absolute top-0 left-0 w-1 h-full bg-purple-500 rounded-l-xl"></div>
+                                    <div class="mb-5 flex justify-between items-center">
+                                        <h3 class="text-slate-800 font-bold text-xs uppercase tracking-wider">TOD WMS (4)</h3>
+                                        <span class="text-[10px] font-semibold text-slate-400">Langkah 4 dari 5</span>
+                                    </div>
+                                    <div class="grid grid-cols-1 gap-4">
+                                        <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">Inbound Del.</label><div class="flex flex-col gap-2"><input type="number" id="wms_1_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md" disabled><input type="number" id="wms_1_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
+                                        <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">GR Form Inb.</label><div class="flex flex-col gap-2"><input type="number" id="wms_2_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md" disabled><input type="number" id="wms_2_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
+                                        <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">Confirm TO GR</label><div class="flex flex-col gap-2"><input type="number" id="wms_3_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md" disabled><input type="number" id="wms_3_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
+                                        <div class="space-y-1.5"><label class="text-[10px] text-slate-500 font-semibold uppercase">Plan Binning</label><div class="flex flex-col gap-2"><input type="number" id="wms_4_p" placeholder="Plan" class="w-full input-premium text-xs p-2 rounded-md" disabled><input type="number" id="wms_4_a" placeholder="Act" class="w-full input-premium text-xs p-2 rounded-md"></div></div>
+                                    </div>
+                                    <div class="mt-6 flex justify-between border-t border-slate-100 pt-4">
+                                        <button type="button" onclick="setTodStep(3)" class="bg-slate-50 text-slate-500 px-4 py-2 rounded-lg text-xs font-bold hover:bg-slate-100 transition">Kembali</button>
+                                        <button type="button" id="btnNext4" onclick="setTodStep(5)" disabled class="bg-purple-50 text-purple-600 px-4 py-2 rounded-lg text-xs font-bold hover:bg-purple-100 transition flex items-center gap-2 btn-locked">Selesai (Isi Behavior)</button>
+                                    </div>
+                                </div>
+                                <!-- Step 5 (Behavior) -->
+                                <div id="todStep5" class="tod-step hidden relative p-6 rounded-xl border border-slate-200 bg-white shadow-sm">
+                                    <div class="absolute top-0 left-0 w-1 h-full bg-slate-800 rounded-l-xl"></div>
+                                    <div class="mb-5 flex justify-between items-center">
+                                        <h3 class="text-slate-800 font-bold text-xs uppercase tracking-wider">Perilaku & Safety</h3>
+                                        <span class="text-[10px] font-semibold text-slate-400">Langkah 5 dari 5</span>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-6 pt-2">
+                                        <div class="space-y-2">
+                                            <label class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Safety (Green Card)</label>
+                                            <input type="number" id="dailyGC" value="0" class="w-full input-premium p-3 rounded-lg text-sm font-bold text-slate-800">
+                                        </div>
+                                        <div class="space-y-2">
+                                            <label class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Improvement (SS)</label>
+                                            <input type="number" id="dailySS" value="0" class="w-full input-premium p-3 rounded-lg text-sm font-bold text-slate-800">
+                                        </div>
+                                    </div>
+                                    <div class="mt-8 flex justify-start border-t border-slate-100 pt-4">
+                                        <button type="button" onclick="setTodStep(4)" class="bg-slate-50 text-slate-500 px-4 py-2 rounded-lg text-xs font-bold hover:bg-slate-100 transition flex items-center gap-2">Kembali ke TOD WMS</button>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="flex gap-3">
-                                <button onclick="toggleView('input')" class="bg-slate-700 hover:bg-slate-600 text-white px-6 py-2.5 rounded-lg text-sm font-bold flex items-center gap-2 transition-all">Kembali</button>
-                                <button onclick="loadDashboardData()" class="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2.5 rounded-lg text-sm font-bold flex items-center gap-2 transition-all">Refresh Data</button>
+
+                            <div class="pt-4">
+                                <button onclick="saveDailyEntry()" id="btnSubmitForm" disabled class="w-full bg-slate-900 text-white font-bold py-4 rounded-xl hover:bg-blue-600 active:scale-[0.99] transition shadow-md flex items-center justify-center gap-2 btn-locked">SUBMIT</button>
                             </div>
+                        </div>
+                    </section>
+
+                    <!-- Activity Log -->
+                    <section class="bg-white rounded-2xl card-shadow border border-slate-200 overflow-hidden">
+                        <div class="px-8 py-5 border-b border-slate-100 flex justify-between items-center">
+                            <h3 class="font-bold text-slate-800 text-sm uppercase tracking-wide">Log Aktivitas Tim</h3>
+                            <span id="entryCount" class="text-[10px] font-bold text-slate-500 bg-slate-100 px-3 py-1 rounded-md border border-slate-200">0 ENTRIES</span>
+                        </div>
+                        <div class="overflow-x-auto custom-scrollbar max-h-[400px]">
+                            <table class="w-full text-left border-collapse">
+                                <thead class="bg-slate-50 text-[10px] font-bold text-slate-500 uppercase tracking-wider sticky top-0 border-b border-slate-200">
+                                    <tr>
+                                        <th class="px-8 py-4">Karyawan</th>
+                                        <th class="px-4 py-4">Tanggal</th>
+                                        <th class="px-4 py-4 text-center">REC %</th>
+                                        <th class="px-4 py-4 text-center">ISS %</th>
+                                        <th class="px-4 py-4 text-center">Status</th>
+                                        <th class="px-8 py-4 text-right">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="historyBody" class="text-sm font-medium divide-y divide-slate-100 bg-white"></tbody>
+                            </table>
+                        </div>
+                    </section>
+                </div>
+
+                <div class="lg:col-span-4 space-y-6">
+                    <div class="sticky top-24 space-y-6">
+                        <div class="bg-slate-900 rounded-2xl p-8 text-white shadow-xl relative overflow-hidden border border-slate-800">
+                            <div class="relative z-10 space-y-6">
+                                <div class="space-y-1.5">
+                                    <label class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Tampilan Data</label>
+                                    <select id="dashboardFilter" onchange="updateDashboard()" class="w-full bg-slate-800 border border-slate-700 rounded-lg text-xs p-2.5 text-slate-200 font-semibold outline-none focus:border-blue-500 transition-colors">
+                                        <option value="ALL">Rata-Rata Seluruh Tim</option>
+                                        <option value="1021095">Ari Faunda Widodo</option>
+                                        <option value="1013522">Fathikin</option>
+                                        <option value="1015861">Slamet Riyadi</option>
+                                        <option value="1022013">Ardi Sutantiyo</option>
+                                        <option value="1015972">Maulana Itsnal</option>
+                                        <option value="1011999">Muhammad Dzu'al Alim Mustaqim</option>
+                                        <option value="1010870">Budi Sutrisno</option>
+                                        <option value="M_RIYADI">Muhammad Riyadi</option>
+                                        <option value="1015332">Wardhani Saputra</option>
+                                        <option value="1013843">Andi Hidayat</option>
+                                    </select>
+                                </div>
+                                <div class="pt-4 border-t border-slate-800">
+                                    <p class="text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-2">Estimasi Nilai Akhir</p>
+                                    <div class="flex items-baseline gap-1">
+                                        <span id="monthlyFinalScore" class="text-6xl font-extrabold tracking-tight">0.0</span>
+                                        <span class="text-xl font-bold text-slate-500">%</span>
+                                    </div>
+                                </div>
+                                <div id="gradeBadge" class="inline-flex items-center gap-2 px-3 py-1.5 bg-slate-800 rounded-md text-[10px] font-bold text-slate-300 uppercase tracking-wide border border-slate-700">Menunggu Data</div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-6 rounded-2xl card-shadow border border-slate-200">
+                            <h3 class="text-[11px] font-bold text-slate-800 uppercase mb-4 tracking-wide border-b border-slate-100 pb-3">Pengaturan Target</h3>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="space-y-1.5">
+                                    <label class="text-[10px] font-semibold text-slate-500 uppercase">Hari Kerja (HK)</label>
+                                    <input type="number" id="monthlyHK" value="28" disabled class="w-full bg-slate-50 border border-slate-100 p-2.5 rounded-lg text-sm font-bold text-slate-400 cursor-not-allowed">
+                                </div>
+                                <div class="space-y-1.5">
+                                    <label class="text-[10px] font-semibold text-slate-500 uppercase">Target Hadir</label>
+                                    <div class="w-full bg-slate-50 border border-slate-100 p-2.5 rounded-lg text-sm font-bold text-slate-400">98%</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-6 rounded-2xl card-shadow border border-slate-200">
+                            <h3 class="text-[11px] font-bold text-slate-800 uppercase mb-6 tracking-wide border-b border-slate-100 pb-3">Komposisi Penilaian</h3>
+                            <div class="space-y-5" id="summaryBars"></div>
                         </div>
                     </div>
                 </div>
+            </main>
+        </div>
 
-                <div class="p-0 overflow-x-auto custom-scrollbar relative">
-                    <div id="dashLoader" class="hidden p-12 text-center text-slate-400 font-bold">Memuat data...</div>
-                    <table class="w-full text-left border-collapse min-w-max" id="dashTable">
-                        <thead id="dashTableHead" class="bg-slate-50 text-[10px] font-bold text-slate-500 uppercase tracking-widest border-b border-slate-200"></thead>
-                        <tbody id="dashTableBody" class="text-sm font-semibold text-slate-800 divide-y divide-slate-100"></tbody>
-                    </table>
+        <div id="viewDashboardArea" class="hidden">
+            <main class="max-w-7xl mx-auto mt-8 px-6 mb-20">
+                <div class="bg-white rounded-3xl card-shadow border border-slate-200 overflow-hidden">
+                    <div class="bg-slate-900 px-8 py-8 text-white relative">
+                        <div class="relative z-10">
+                            <h2 class="text-3xl font-extrabold tracking-tight mb-2">Executive Performance Dashboard</h2>
+                            <div class="flex flex-wrap gap-4 items-end mt-8">
+                                <div class="space-y-2">
+                                    <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Tipe Breakdown</label>
+                                    <select id="dashPeriodType" onchange="loadDashboardData()" class="bg-slate-800 border border-slate-700 text-white text-sm rounded-lg px-4 py-2.5 outline-none focus:border-blue-500 transition-colors">
+                                        <option value="BULAN">Per Bulan (Jan - Des)</option>
+                                        <option value="MINGGU">Per Minggu</option>
+                                        <option value="HARI">Per Hari</option>
+                                    </select>
+                                </div>
+                                <div class="flex gap-3">
+                                    <button onclick="toggleView('input')" class="bg-slate-700 hover:bg-slate-600 text-white px-6 py-2.5 rounded-lg text-sm font-bold flex items-center gap-2 transition-all">Kembali</button>
+                                    <button onclick="loadDashboardData()" class="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2.5 rounded-lg text-sm font-bold flex items-center gap-2 transition-all">Refresh Data</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-0 overflow-x-auto custom-scrollbar relative">
+                        <div id="dashLoader" class="hidden p-12 text-center text-slate-400 font-bold">Memuat data...</div>
+                        <table class="w-full text-left border-collapse min-w-max" id="dashTable">
+                            <thead id="dashTableHead" class="bg-slate-50 text-[10px] font-bold text-slate-500 uppercase border-b border-slate-200"></thead>
+                            <tbody id="dashTableBody" class="text-sm font-semibold text-slate-800 divide-y divide-slate-100"></tbody>
+                        </table>
+                    </div>
                 </div>
-            </div>
-        </main>
+            </main>
+        </div>
     </div>
 
     <script>
@@ -392,37 +462,92 @@
             "1015972": "Maulana Itsnal",
             "1011999": "Muhammad Dzu'al Alim Mustaqim",
             "1010870": "Budi Sutrisno",
-            "M_RIYADI": "Muhammad Riyadi"
+            "M_RIYADI": "Muhammad Riyadi",
+            "1015332": "Wardhani Saputra",
+            "1013843": "Andi Hidayat"
         };
         const empNames = Object.values(employees);
         let kpiDataStore = JSON.parse(localStorage.getItem('kpi_v3_data')) || [];
 
-        document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('inputDate').value = new Date().toISOString().split('T')[0];
-            updateDashboard();
-            validateFormFlow();
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbwb3GZqiBXNr-8WnyoHnVS_FSPY9mPi9bCZiQ1HYx8KIgqC5AWV8oYmSrpqtR9wP7eM/exec';
+        const planTargetCSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSnBa8vgZNAd7LFL_qxPGfPmcdI6lXjohS_Qt1Eie-gkzrmE1YeDH-evfG4TPu-6XADO5qLDGQl8KCA/pub?gid=1222103059&single=true&output=csv';
 
-            // Navigasi Enter Key
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter') {
-                    if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') {
-                        e.preventDefault();
-                        const formArea = document.querySelector('.p-8.space-y-8');
-                        if (formArea) {
-                            const focusables = Array.from(formArea.querySelectorAll('input:not([disabled]), select:not([disabled]), button:not([disabled])')).filter(el => {
-                                const todStep = el.closest('.tod-step');
-                                return !todStep || !todStep.classList.contains('hidden');
-                            });
-                            
-                            const index = focusables.indexOf(e.target);
-                            if (index > -1 && index < focusables.length - 1) {
-                                focusables[index + 1].focus();
-                            }
-                        }
-                    }
-                }
+        // --- UTILITIES ---
+        function calculateSectionAvg(ids) {
+            let total = 0, count = 0;
+            for(let i=0; i<ids.length; i+=2) {
+                const pEl = document.getElementById(ids[i]);
+                const aEl = document.getElementById(ids[i+1]);
+                const p = pEl ? parseFloat(pEl.value) || 0 : 0;
+                const a = aEl ? parseFloat(aEl.value) || 0 : 0;
+                if(p > 0) { total += Math.min((a/p)*100, 100); count++; }
+            }
+            return count > 0 ? total/count : 0;
+        }
+
+        function isGroupFilled(ids) {
+            return ids.every(id => {
+                const el = document.getElementById(id);
+                return el && el.value !== "";
             });
-        });
+        }
+
+        function updateButtonState(btnId, isReady) {
+            const btn = document.getElementById(btnId);
+            if (!btn) return;
+            if (isReady) {
+                btn.disabled = false;
+                btn.classList.remove('btn-locked');
+            } else {
+                btn.disabled = true;
+                btn.classList.add('btn-locked');
+            }
+        }
+
+        function parseCSV(text) {
+            const lines = text.split('\n');
+            if (lines.length === 0) return [];
+            const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''));
+            return lines.slice(1).map(l => {
+                const row = l.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+                const obj = {};
+                headers.forEach((h, i) => {
+                    if (row[i]) obj[h] = row[i].replace(/^"|"$/g, '').trim();
+                });
+                return obj;
+            });
+        }
+
+        // --- CORE FUNCTIONS ---
+        function attemptLogin() {
+            const selectedNik = document.getElementById('loginUser').value;
+            const inputPass = document.getElementById('loginPass').value;
+
+            if (!selectedNik) {
+                showPopup("Silakan pilih NIK terlebih dahulu.");
+                return;
+            }
+
+            if (inputPass === selectedNik) {
+                document.getElementById('loginOverlay').style.display = 'none';
+                document.getElementById('mainApp').style.display = 'block';
+                const userSelector = document.getElementById('userSelector');
+                userSelector.value = selectedNik;
+                userSelector.disabled = true;
+                syncDashboardFilter();
+                fetchPlanTargets(); 
+                validateFormFlow();
+            } else {
+                showPopup("Remark: Password tidak sesuai dengan NIK yang dipilih.");
+            }
+        }
+
+        function showPopup(message) {
+            const popup = document.getElementById('errorPopup');
+            document.getElementById('errorRemark').innerText = message;
+            popup.style.display = 'flex';
+            setTimeout(() => { popup.style.display = 'none'; }, 4000);
+        }
 
         function syncDashboardFilter() {
             const userVal = document.getElementById('userSelector').value;
@@ -435,73 +560,92 @@
             if(view === 'dashboard') loadDashboardData();
         }
 
+        async function fetchPlanTargets() {
+            try {
+                const response = await fetch(`${planTargetCSV}&t=${Date.now()}`);
+                if (!response.ok) throw new Error("Gagal mengambil data");
+                const data = await response.text();
+                const rows = parseCSV(data);
+                
+                const mapping = {
+                    "1. Receiving (Fisik vs Dokumen)": "rec_1_p",
+                    "2. Update Binning & LIB": "rec_2_p",
+                    "3. Stock Opname (Area Inbound)": "rec_3_p",
+                    "4. Durasi Proses (SLA)": "rec_4_p",
+                    "5. STO GR Site Pengirim": "rec_5_p",
+                    "1. Issuing": "iss_1_p",
+                    "2. GR Part Damage": "iss_2_p",
+                    "3. Stock Opname hari ini": ["iss_3_p", "inv_1_p"],
+                    "4. GI Part Damage": "iss_4_p",
+                    "5. STO yang sudah GI hari ini": "iss_5_p",
+                    "6. GR Site Penerima hari ini": "iss_6_p",
+                    "2. Under Stock": "inv_2_p",
+                    "3. Over Stock": "inv_3_p",
+                    "4. Kalibrasi Min-Max": "inv_4_p",
+                    "5. Update SAP": "inv_5_p",
+                    "6. Audit Binning": "inv_6_p",
+                    "1. Inbound Del.": "wms_1_p",
+                    "2. GR Form Inb.": "wms_2_p",
+                    "3. Confirm TO GR": "wms_3_p",
+                    "4. Plan Binning": "wms_4_p"
+                };
+
+                rows.forEach(row => {
+                    const activity = row['Langkah / Aktivitas'];
+                    const targetValRaw = row['Target (Plan) Harian'];
+                    const targetVal = targetValRaw ? targetValRaw.replace(/[^\d.-]/g, '') : "";
+                    const targetIDs = mapping[activity];
+                    
+                    if (targetIDs && targetVal !== "") {
+                        const ids = Array.isArray(targetIDs) ? targetIDs : [targetIDs];
+                        ids.forEach(id => {
+                            const el = document.getElementById(id);
+                            if (el) {
+                                el.value = targetVal;
+                                el.disabled = true; 
+                                el.classList.add('bg-slate-100', 'font-extrabold', 'text-slate-900');
+                            }
+                        });
+                    }
+                });
+
+                validateWizardSteps();
+                updateDashboard();
+            } catch (error) { console.error(error); }
+        }
+
         function validateFormFlow() {
             const user = document.getElementById('userSelector').value;
             const hadir = document.getElementById('isHadir').value;
             const disc = document.getElementById('dailyDisc').value;
-            
             if (user) document.getElementById('isHadir').disabled = false;
             if (hadir) document.getElementById('dailyDisc').disabled = false;
-
             const wizard = document.getElementById('wizardContainer');
-            if (disc) {
-                wizard.classList.remove('hidden');
-                validateWizardSteps();
-            } else {
-                wizard.classList.add('hidden');
-            }
+            if (disc) { wizard.classList.remove('hidden'); validateWizardSteps(); } 
+            else { wizard.classList.add('hidden'); }
         }
 
         function validateWizardSteps() {
             const s1Complete = isGroupFilled(['rec_1_p','rec_1_a','rec_2_p','rec_2_a','rec_3_p','rec_3_a','rec_4_p','rec_4_a','rec_5_p','rec_5_a']);
             updateButtonState('btnNext1', s1Complete);
-
             const s2Complete = isGroupFilled(['iss_1_p','iss_1_a','iss_2_p','iss_2_a','iss_3_p','iss_3_a','iss_4_p','iss_4_a','iss_5_p','iss_5_a','iss_6_p','iss_6_a']);
             updateButtonState('btnNext2', s2Complete);
-
             const s3Complete = isGroupFilled(['inv_1_p','inv_1_a','inv_2_p','inv_2_a','inv_3_p','inv_3_a','inv_4_p','inv_4_a','inv_5_p','inv_5_a','inv_6_p','inv_6_a']);
             updateButtonState('btnNext3', s3Complete);
-
             const s4Complete = isGroupFilled(['wms_1_p','wms_1_a','wms_2_p','wms_2_a','wms_3_p','wms_3_a','wms_4_p','wms_4_a']);
             updateButtonState('btnNext4', s4Complete);
-
             const s5Complete = document.getElementById('dailyGC').value !== "" && document.getElementById('dailySS').value !== "";
             const currentStep = document.querySelector('.tod-step:not(.hidden)')?.id;
             const isAllStepsReady = s1Complete && s2Complete && s3Complete && s4Complete && s5Complete;
             updateButtonState('btnSubmitForm', isAllStepsReady && currentStep === 'todStep5');
         }
 
-        function isGroupFilled(ids) {
-            return ids.every(id => document.getElementById(id).value !== "");
-        }
-
-        function updateButtonState(btnId, isReady) {
-            const btn = document.getElementById(btnId);
-            if (isReady) {
-                btn.disabled = false;
-                btn.classList.remove('btn-locked');
-            } else {
-                btn.disabled = true;
-                btn.classList.add('btn-locked');
-            }
-        }
-
         function setTodStep(step) {
             document.querySelectorAll('.tod-step').forEach(el => el.className = 'tod-step hidden');
             const target = document.getElementById('todStep' + step);
-            target.className = 'tod-step block relative p-6 rounded-xl border border-slate-200 bg-white shadow-sm';
+            if (target) target.className = 'tod-step block relative p-6 rounded-xl border border-slate-200 bg-white shadow-sm';
             validateWizardSteps();
             updateDashboard();
-        }
-
-        function calculateSectionAvg(ids) {
-            let total = 0, count = 0;
-            for(let i=0; i<ids.length; i+=2) {
-                const p = parseFloat(document.getElementById(ids[i]).value) || 0;
-                const a = parseFloat(document.getElementById(ids[i+1]).value) || 0;
-                if(p > 0) { total += Math.min((a/p)*100, 100); count++; }
-            }
-            return count > 0 ? total/count : 0;
         }
 
         function saveDailyEntry() {
@@ -516,8 +660,7 @@
                 iss: calculateSectionAvg(['iss_1_p','iss_1_a','iss_2_p','iss_2_a','iss_3_p','iss_3_a','iss_4_p','iss_4_a','iss_5_p','iss_5_a','iss_6_p','iss_6_a']),
                 inv: calculateSectionAvg(['inv_1_p','inv_1_a','inv_2_p','inv_2_a','inv_3_p','inv_3_a','inv_4_p','inv_4_a','inv_5_p','inv_5_a','inv_6_p','inv_6_a']),
                 wms: calculateSectionAvg(['wms_1_p','wms_1_a','wms_2_p','wms_2_a','wms_3_p','wms_3_a','wms_4_p','wms_4_a']),
-                hadir: parseInt(isHadirVal),
-                disc: dailyDiscVal,
+                hadir: parseInt(isHadirVal), disc: dailyDiscVal,
                 gc: parseInt(document.getElementById('dailyGC').value) || 0,
                 ss: parseInt(document.getElementById('dailySS').value) || 0
             };
@@ -526,33 +669,26 @@
             if (existingIdx !== -1) {
                 if (!confirm(`Perbarui data ${entry.userName}?`)) return;
                 kpiDataStore[existingIdx] = entry;
-            } else {
-                kpiDataStore.push(entry);
-            }
+            } else { kpiDataStore.push(entry); }
 
-            const scriptURL = 'https://script.google.com/macros/s/AKfycbwb3GZqiBXNr-8WnyoHnVS_FSPY9mPi9bCZiQ1HYx8KIgqC5AWV8oYmSrpqtR9wP7eM/exec';
             const formData = new FormData();
             Object.keys(entry).forEach(k => {
                 let v = entry[k];
                 if(typeof v === 'number' && k !== 'id' && k !== 'userId') v = v.toFixed(2);
-                if(k === 'hadir') {
-                    if(v == 1) v = 'Hadir';
-                    else if(v == 2) v = 'Cuti';
-                    else v = 'Absen';
-                }
+                if(k === 'hadir') v = (v == 1 ? 'Hadir' : (v == 2 ? 'Cuti' : 'Absen'));
                 formData.append(k, v);
             });
 
             fetch(scriptURL, { method: 'POST', body: formData }).catch(e => console.error(e));
             localStorage.setItem('kpi_v3_data', JSON.stringify(kpiDataStore));
             updateDashboard();
-            resetInputs();
+            resetInputs(true);
+            alert("Data berhasil dikirim!");
         }
 
         function updateDashboard() {
             const filter = document.getElementById('dashboardFilter').value;
             const userSelector = document.getElementById('userSelector').value;
-            
             let data = filter === 'ALL' ? [...kpiDataStore] : kpiDataStore.filter(e => e.userId === filter);
 
             if (userSelector && (filter === 'ALL' || filter === userSelector)) {
@@ -571,18 +707,8 @@
 
             if (data.length === 0) {
                 document.getElementById('monthlyFinalScore').innerText = "0.0";
-                document.getElementById('entryCount').innerText = "0 ENTRIES";
                 document.getElementById('gradeBadge').innerText = "Menunggu Data";
-                renderBars([
-                    {label:'Receiving',val:0,color:'bg-blue-500',weight:'17.5%'},
-                    {label:'Issuing',val:0,color:'bg-emerald-500',weight:'17.5%'},
-                    {label:'Inventory',val:0,color:'bg-amber-500',weight:'17.5%'},
-                    {label:'WMS',val:0,color:'bg-purple-500',weight:'17.5%'},
-                    {label:'Kehadiran',val:0,color:'bg-cyan-500',weight:'5%'},
-                    {label:'Kedisiplinan',val:0,color:'bg-indigo-500',weight:'15%'},
-                    {label:'Safety Individu',val:0,color:'bg-rose-500',weight:'5%'},
-                    {label:'Suggestion System',val:0,color:'bg-teal-500',weight:'5%'}
-                ]);
+                renderBars([{label:'Receiving',val:0,color:'bg-blue-500',weight:'17.5%'},{label:'Issuing',val:0,color:'bg-emerald-500',weight:'17.5%'},{label:'Inventory',val:0,color:'bg-amber-500',weight:'17.5%'},{label:'WMS',val:0,color:'bg-purple-500',weight:'17.5%'},{label:'Kehadiran',val:0,color:'bg-cyan-500',weight:'5%'},{label:'Kedisiplinan',val:0,color:'bg-indigo-500',weight:'15%'},{label:'Safety Individu',val:0,color:'bg-rose-500',weight:'5%'},{label:'Suggestion System',val:0,color:'bg-teal-500',weight:'5%'}]);
                 renderLog([]);
                 return;
             }
@@ -593,32 +719,18 @@
             const avgInv = data.reduce((s,e)=>s+(e.inv||0),0)/count;
             const avgWms = data.reduce((s,e)=>s+(e.wms||0),0)/count;
             const totalHadir = data.filter(e=>e.hadir===1).length;
-            const effectiveHK = count;
-            const attScore = ((totalHadir/effectiveHK)*100 >= 98) ? 100 : ((totalHadir/effectiveHK)*100/98)*100;
-
+            const attScore = ((totalHadir/count)*100 >= 98) ? 100 : ((totalHadir/count)*100/98)*100;
             let totalDiscScore = 0, dCount = 0;
             data.forEach(e => { if(e.disc){ dCount++; if(e.disc==='NORMAL') totalDiscScore+=100; else if(e.disc==='PC') totalDiscScore+=50; } });
             const avgDisc = dCount > 0 ? totalDiscScore/dCount : 0;
-
             const tGC = data.reduce((s,e)=>s+(e.gc||0),0), tSS = data.reduce((s,e)=>s+(e.ss||0),0);
             const safetyS = Math.min((tGC/(filter==='ALL'?20:4))*100, 100), ssS = Math.min((tSS/(filter==='ALL'?5:1))*100, 100);
-
             const final = (avgRec*0.175)+(avgIss*0.175)+(avgInv*0.175)+(avgWms*0.175)+(avgDisc*0.15)+(attScore*0.05)+(safetyS*0.05)+(ssS*0.05);
+
             document.getElementById('monthlyFinalScore').innerText = final.toFixed(1);
-            const badge = document.getElementById('gradeBadge');
-            badge.innerText = final >= 90 ? 'Grade: Excellent' : final >= 75 ? 'Grade: Good' : 'Grade: Needs Imprv';
-            renderBars([
-                {label:'Receiving',val:avgRec,color:'bg-blue-500',weight:'17.5%'},
-                {label:'Issuing',val:avgIss,color:'bg-emerald-500',weight:'17.5%'},
-                {label:'Inventory',val:avgInv,color:'bg-amber-500',weight:'17.5%'},
-                {label:'WMS',val:avgWms,color:'bg-purple-500',weight:'17.5%'},
-                {label:'Kehadiran',val:attScore,color:'bg-cyan-500',weight:'5%'},
-                {label:'Kedisiplinan',val:avgDisc,color:'bg-indigo-500',weight:'15%'},
-                {label:'Safety Individu',val:safetyS,color:'bg-rose-500',weight:'5%'},
-                {label:'Suggestion System',val:ssS,color:'bg-teal-500',weight:'5%'}
-            ]);
+            document.getElementById('gradeBadge').innerText = final >= 90 ? 'Grade: Excellent' : final >= 75 ? 'Grade: Good' : 'Grade: Needs Imprv';
+            renderBars([{label:'Receiving',val:avgRec,color:'bg-blue-500',weight:'17.5%'},{label:'Issuing',val:avgIss,color:'bg-emerald-500',weight:'17.5%'},{label:'Inventory',val:avgInv,color:'bg-amber-500',weight:'17.5%'},{label:'WMS',val:avgWms,color:'bg-purple-500',weight:'17.5%'},{label:'Kehadiran',val:attScore,color:'bg-cyan-500',weight:'5%'},{label:'Kedisiplinan',val:avgDisc,color:'bg-indigo-500',weight:'15%'},{label:'Safety Individu',val:safetyS,color:'bg-rose-500',weight:'5%'},{label:'Suggestion System',val:ssS,color:'bg-teal-500',weight:'5%'}]);
             renderLog(kpiDataStore.filter(e=>filter==='ALL' || e.userId===filter));
-            validateWizardSteps();
         }
 
         function renderBars(data) {
@@ -643,7 +755,7 @@
                     <td class="px-4 py-3 text-slate-600">${e.date}</td>
                     <td class="px-4 py-3 text-center font-bold">${e.rec.toFixed(0)}%</td>
                     <td class="px-4 py-3 text-center font-bold">${e.iss.toFixed(0)}%</td>
-                    <td class="px-4 py-3 text-center"><span class="status-badge ${e.hadir === 1 ? 'bg-emerald-50 text-emerald-600' : e.hadir === 2 ? 'bg-blue-50 text-blue-600' : 'bg-red-50 text-red-600'}">${e.hadir === 1 ? 'Hadir' : e.hadir === 2 ? 'Cuti' : 'Absen'}</span></td>
+                    <td class="px-4 py-3 text-center"><span class="status-badge ${e.hadir === 1 ? 'bg-emerald-50 text-emerald-600' : (e.hadir === 2 ? 'bg-blue-50 text-blue-600' : 'bg-red-50 text-red-600')}">${e.hadir === 1 ? 'Hadir' : (e.hadir === 2 ? 'Cuti' : 'Absen')}</span></td>
                     <td class="px-8 py-3 text-right"><button onclick="deleteEntry(${e.id})" class="text-slate-300 hover:text-red-500 transition-colors">Hapus</button></td>
                 </tr>
             `).join('');
@@ -656,18 +768,30 @@
             updateDashboard();
         }
 
-        function resetInputs() {
+        function resetInputs(keepUser = false) {
             document.querySelectorAll('input[type="number"]').forEach(i => i.value = '');
             document.querySelectorAll('input[type="number"][id^="daily"]').forEach(i => i.value = '0');
-            document.getElementById('userSelector').value = '';
+            if (!keepUser) {
+                document.getElementById('userSelector').value = '';
+                document.getElementById('userSelector').disabled = false;
+            }
             document.getElementById('isHadir').value = '';
-            document.getElementById('isHadir').disabled = true;
+            document.getElementById('isHadir').disabled = !keepUser;
             document.getElementById('dailyDisc').value = '';
             document.getElementById('dailyDisc').disabled = true;
             document.getElementById('wizardContainer').classList.add('hidden');
             setTodStep(1); 
             updateDashboard();
-            validateFormFlow();
+            fetchPlanTargets(); 
+        }
+
+        function logout() {
+            if(!confirm('Anda yakin ingin keluar?')) return;
+            document.getElementById('mainApp').style.display = 'none';
+            document.getElementById('loginOverlay').style.display = 'flex';
+            document.getElementById('loginPass').value = '';
+            document.getElementById('loginUser').value = '';
+            resetInputs(false);
         }
 
         async function loadDashboardData() {
@@ -681,42 +805,27 @@
             document.getElementById('dashLoader').className = 'hidden';
         }
 
-        function parseCSV(text) {
-            const lines = text.split('\n');
-            const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, ''));
-            return lines.slice(1).map(l => {
-                const row = l.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-                const obj = {};
-                headers.forEach((h, i) => obj[h] = row[i]?.replace(/^"|"$/g, '').trim());
-                return obj;
-            });
-        }
-
         function renderDashboardMatrix(rawData) {
             const periodType = document.getElementById('dashPeriodType').value;
-            const selMonth = document.getElementById('dashMonthSelect').value;
             let cols = [], head = `<tr><th class="p-4 sticky-col min-w-[220px]">Karyawan</th>`;
             if (periodType === 'BULAN') {
                 ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Ags','Sep','Okt','Nov','Des'].forEach((m,i)=>{ cols.push({id:i+1,label:m}); head+=`<th class="p-4 text-center">${m}</th>`; });
-                head += `<th class="p-4 text-center bg-blue-50">YTD Avg</th></tr>`;
+                head += `<th class="p-4 text-center bg-blue-50 font-bold">YTD Avg</th></tr>`;
             } else if (periodType === 'MINGGU') {
                 for(let i=1;i<=5;i++){ cols.push({id:`W${i}`,label:`W${i}`}); head+=`<th class="p-4 text-center">Minggu ${i}</th>`; }
                 head += `</tr>`;
             } else {
-                const days = new Date(2026, selMonth==='ALL'?1:selMonth, 0).getDate();
-                for(let i=1;i<=days;i++){ cols.push({id:i}); head+=`<th class="p-4 text-center border-x border-slate-100">${i}</th>`; }
+                for(let i=1;i<=31;i++){ cols.push({id:i}); head+=`<th class="p-4 text-center border-x border-slate-100">${i}</th>`; }
                 head += `</tr>`;
             }
             document.getElementById('dashTableHead').innerHTML = head;
             let results = empNames.map(name => {
                 const empData = rawData.filter(r => r['Nama Karyawan'] === name);
-                let scores = [];
-                let cells = cols.map(c => {
+                let scores = [], cells = cols.map(c => {
                     const filtered = empData.filter(r => {
                         const d = new Date(r['Tanggal']);
                         if(periodType === 'BULAN') return d.getMonth()+1 === c.id;
-                        if(selMonth!=='ALL' && d.getMonth()+1 !== parseInt(selMonth)) return false;
-                        return periodType === 'MINGGU' ? `W${Math.ceil(d.getDate()/7)}` === c.id : d.getDate() === c.id;
+                        return true; 
                     });
                     const score = calcScoreForRows(filtered, periodType);
                     if(score !== '-') scores.push(parseFloat(score));
@@ -725,29 +834,48 @@
                 const overall = scores.length ? scores.reduce((a,b)=>a+b,0)/scores.length : -1;
                 return { name, cells, overall, ytd: overall > -1 ? overall.toFixed(1)+'%' : '-' };
             }).sort((a,b)=>b.overall - a.overall);
+            
             document.getElementById('dashTableBody').innerHTML = results.map((r,idx)=>{
                 let icon = r.overall > -1 ? (idx===0?'🏆':idx===1?'🥈':idx===2?'🥉':'') : '';
-                let body = `<tr class="border-b border-slate-100 hover:bg-slate-50"><td class="p-4 font-bold sticky-col flex items-center">${r.name}<span class="ml-2">${icon}</span></td>`;
+                let body = `<tr class="border-b border-slate-100 hover:bg-slate-50 transition-colors"><td class="p-4 font-bold sticky-col flex items-center">${r.name}<span class="ml-2">${icon}</span></td>`;
                 r.cells.forEach(c => {
-                    let cls = 'text-slate-400';
-                    if(c !== '-') { const v = parseFloat(c); cls = v >= 90 ? 'text-emerald-600 font-bold' : v >= 75 ? 'text-blue-600' : 'text-red-500'; }
+                    let cls = (c !== '-' && parseFloat(c) >= 90) ? 'text-emerald-600 font-bold' : (c !== '-' && parseFloat(c) >= 75 ? 'text-blue-600' : 'text-red-500');
                     body += `<td class="p-4 text-center ${cls}">${c}</td>`;
                 });
-                if(periodType === 'BULAN') body += `<td class="p-4 text-center font-black bg-blue-50">${r.ytd}</td>`;
+                if(periodType === 'BULAN') body += `<td class="p-4 text-center font-black bg-blue-50 text-slate-900">${r.ytd}</td>`;
                 return body + '</tr>';
             }).join('');
         }
 
         function calcScoreForRows(rows, type) {
             if (!rows.length) return '-';
-            let rec = rows.reduce((s,r)=>s+parseFloat(r['TOD Receiving (%)']||0),0)/rows.length, iss = rows.reduce((s,r)=>s+parseFloat(r['TOD Issuing (%)']||0),0)/rows.length;
-            let inv = rows.reduce((s,r)=>s+parseFloat(r['TOD Inventory (%)']||0),0)/rows.length, wms = rows.reduce((s,r)=>s+parseFloat(r['TOD WMS (%)']||0),0)/rows.length;
-            let had = rows.filter(r => r['Kehadiran']==='Hadir').length, gc = rows.reduce((s,r)=>s+parseInt(r['Safety (GC)']||0),0), ss = rows.reduce((s,r)=>s+parseInt(r['Improvement (SS)']||0),0);
+            let rec = rows.reduce((s,r)=>s+parseFloat(r['TOD Receiving (%)']||0),0)/rows.length;
+            let iss = rows.reduce((s,r)=>s+parseFloat(r['TOD Issuing (%)']||0),0)/rows.length;
+            let inv = rows.reduce((s,r)=>s+parseFloat(r['TOD Inventory (%)']||0),0)/rows.length;
+            let wms = rows.reduce((s,r)=>s+parseFloat(r['TOD WMS (%)']||0),0)/rows.length;
+            let had = rows.filter(r => r['Kehadiran']==='Hadir').length;
+            let gc = rows.reduce((s,r)=>s+parseInt(r['Safety (GC)']||0),0), ss = rows.reduce((s,r)=>s+parseInt(r['Improvement (SS)']||0),0);
             let pc = rows.filter(r=>(r['Kedisiplinan']||'').includes('PC')).length, sp = rows.filter(r=>(r['Kedisiplinan']||'').includes('SP')).length;
-            let disc = sp ? 0 : (pc===1?50:(pc>1?0:100)), hk = type==='MINGGU'?7:(type==='HARI'?1:28);
+            let disc = sp ? 0 : (pc===1?50:(pc>1?0:100));
+            let hk = type==='MINGGU'?7:(type==='HARI'?1:28);
             let att = Math.min((had/hk)*100/98*100, 100), sS = Math.min((gc/(hk===28?4:0.14))*100, 100), iS = Math.min((ss/(hk===28?1:0.035))*100, 100);
             return (rec*0.175+iss*0.175+inv*0.175+wms*0.175+disc*0.15+att*0.05+sS*0.05+iS*0.05).toFixed(1)+'%';
         }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                if (document.getElementById('loginOverlay').style.display !== 'none') { attemptLogin(); return; }
+                if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') {
+                    e.preventDefault();
+                    const focusables = Array.from(document.querySelectorAll('input:not([disabled]), select:not([disabled]), button:not([disabled])')).filter(el => {
+                        const todStep = el.closest('.tod-step');
+                        return !todStep || !todStep.classList.contains('hidden');
+                    });
+                    const index = focusables.indexOf(e.target);
+                    if (index > -1 && index < focusables.length - 1) focusables[index + 1].focus();
+                }
+            }
+        });
     </script>
 </body>
 </html>
